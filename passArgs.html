@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Adding 'a' and 'b'</h1>
+
+  a: <input type="text" name="sdf" id="a"><br>
+  b: <input type="text" name="jyuky" id="b"><br>
+  <button onclick="add(document.getElementById('a').value,document.getElementById('b').value)">Add</button>
+
+<p>Setting a default value to a function parameter.</p>
+<p id="demo"></p>
+
+<script>
+
+  function add(a,b) {
+    var sum = (a) + (b);
+   document.getElementById("demo").innerHTML = sum;
+  }
+</script>
+</body>
+
+</html>

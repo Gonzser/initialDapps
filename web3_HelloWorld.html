@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Ethereum Smart Contract real Hello World </title>
+
+		<!--carga de bibliotecas para todo-->
+		<script type="text/javascript" src="web3.min.js"></script>
+		<!--<script type="text/javascript" src="web3-light.min.js"></script>-->
+		<!--<script type="text/javascript" src="ethjs.js"></script>-->
+   		<script type="text/javascript">
+
+
+
+		//Chequeamos si es posible hacer la coneccion a Ethereum y con quien
+		if(typeof window.web3 !== "undefined" && typeof window.web3.currentProvider !== "undefined") {
+        	var web3 = new Web3(window.web3.currentProvider);
+      	} else {
+			console.log('No web3. Trying MetaMask.');
+        	var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+      	};
+
+					var abi =[
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"name": "_x",
+						"type": "uint256"
+					},
+					{
+						"name": "_y",
+						"type": "uint256"
+					}
+				],
+				"name": "added",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"name": "x",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"name": "y",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"name": "result",
+						"type": "uint256"
+					}
+				],
+				"name": "IntegersAdded",
+				"type": "event"
+			},
+			{
+				"constant": false,
+				"inputs": [
+					{
+						"name": "_name",
+						"type": "string"
+					}
+				],
+				"name": "yesAdd",
+				"outputs": [],
+				"payable": false,
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		];
+
+			//Configuramos la instancia al contrato
+			var MyContract = web3.eth.contract(abi);
+			var myContractInstance = MyContract.at('0xe71e6fdee14f705edfa87015c527941a5f047da9');
+
+
+
+
+
+
+			//Manda a la consola la info del proveedor de la red Ethereum y la version
+			web3.version.getNetwork((err, netId) => {
+			  switch (netId) {
+				case "1":
+				  console.log('This is mainnet')
+				  break
+				case "2":
+				  console.log('This is the deprecated Morden test network.')
+				  break
+				case "3":
+				  console.log('This is the ropsten test network.')
+				  break
+				case "4":
+				  console.log('This is the Rinkeby test network.')
+				  break
+				case "42":
+				  console.log('This is the Kovan test network.')
+				  break
+				default:
+				  console.log('This is an unknown network.')
+			  }
+			});
+
+			//toma el ultimo bloque de la cadena/.
+			var blockId = 7357;
+			web3.eth.getBlockNumber(function (err, result){console.log(result);
+														  var para = document.getElementById("blockId");
+														  para.innerText="Last processed Block Id: " + result;});
+
+
+
+		</script>
+	</head>
+	<body>
+		<h2>Ethereum real Smart Contract HELLO WORLD</h2>
+		<p id="blockId">Lastest Block: </p>
+<!--
+Mejoras hacia adelante. 
+Tomar la cuenta [0] y sacar el balance auto y de inicio
+Poder cargar varios balances de ctas
+y estados de contratos. 
+Metodos publicos pagos y no 
+Eventos publicos y condicionados
+carga de ABI 
+Link de Contrato etc.
+-->
+
+		<div>
+			Enter to submit Address Contract: 0xe71e6fdee14f705edfa87015c527941a5f047da9
+			<br>
+			<span>
+				<p style="display:inline">Contract Connect: </p>
+				<p style="display:inline" id="contractId" >Waitting ...</p>
+			</span>
+			<input type="text" size="50" name="b" id="greetingsIn"><br>
+			<button onclick="contractConnect(document.getElementById('greetingsIn').value)">
+				Send Greetings</button>
+		</div>
+			
+		<div>
+			Enter an Account:
+			<input type="text" size="50" name="b" id="accountIn"><br>
+			<button onclick="printAccountBalance(document.getElementById('accountIn').value)">
+				Get Balance</button>
+		</div>
+		<div>
+			<br>	
+			<span>
+				<p style="display:inline">Account Balance:</p> 
+				<p style="display:inline" id='balanceId'></p>
+			</span>
+		</div>
+		<script>
+
+			var contractStatus=document.getElementById('contractId');
+
+			//Definicion de funciones
+
+			//hace una llamada a un metodo del Smart Contract
+			function contractConnect (msgString){
+
+				myContractInstance.yesAdd(msgString, function(err, result){console.log(result); contractStatus.innerText='DONE'});
+			}
+
+			//getBalance
+  			function printAccountBalance(account) {
+
+				/* web3 get the balance, in a asyncronic funtion by a callback arg.
+				after and inside callback function inject result in HLMT in ether format.
+				Any command OUT of Callback function
+				will be process before get result, so not useful*/
+    			var balanceWei=web3.eth.getBalance(account,
+							function(error,result){console.log(result);
+								//implement error throw
+
+								//put balance in DOM
+								var balance=document.getElementById('balanceId');
+								balance.innerHTML=web3.fromWei(result,'ether')+' Ether<br><p id="accountCK">Account Address : ['+account+']<br><br>'});
+  			}
+
+		</script>
+
+
+	</body>
+</html>
